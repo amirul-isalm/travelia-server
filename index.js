@@ -68,7 +68,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("hi.. i am amirul islam shanto");
+  res.send("hi... i am amirul islam shanto");
 });
 app.listen(port, () => {
   console.log("Your listening port is ", port);
