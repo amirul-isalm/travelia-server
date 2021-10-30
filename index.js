@@ -44,23 +44,79 @@ async function run() {
       res.json(service);
     });
 
+    // call single Data from All booking
+    app.get("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const service = await booking.findOne(query);
+      res.json(service);
+    });
+
+    // Update Booking information
+    app.put("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      const options = { upsert: true };
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          fullname: body.fullname,
+          email: body.email,
+          person:body.person,
+            serviceName: body.serviceName,
+          
+          date:body.date,
+          phone: body.phone,
+          address: body.address,
+          photo: body.photo,
+          price: body.price,
+          totalPrice: body.totalPrice,
+          duration: body.duration,
+          status:body.status
+        }
+      };
+ const result = await booking.updateOne(filter, updateDoc, options);
+      res.send(result)
+    });
+
+    // call all booing from manage all bookings
+    app.get("/allBooking", async (req, res) => {
+      const allbooking = await booking.find({}).toArray();
+      res.json(allbooking);
+    });
+
     //   post confirm Booking
     app.post("/confirmBooking", async (req, res) => {
       const bookingData = req.body.data;
       const result = await booking.insertOne(bookingData);
-      res.json(result)
+      res.json(result);
     });
-// call my booking  data from booking database useing email params
+
+    // add a new service
+
+    app.post("/addNewSevice", async (req, res) => {
+      const newService = req.body.data;
+      const result = await allService.insertOne(newService);
+      res.json(result);
+    });
+
+    // call my booking  data from booking database useing email params
     app.get("/allBooking/:email", async (req, res) => {
       const myemail = req.params.email;
-     
-      const query = { email: myemail };
-      
-      const myBookings = await booking.find(query).toArray();
-      res.json(myBookings)
-    });
-    
 
+      const query = { email: myemail };
+
+      const myBookings = await booking.find(query).toArray();
+      res.json(myBookings);
+    });
+
+    // Delete a booking service
+    app.delete("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await booking.deleteOne(query);
+      res.json(result);
+    });
   } finally {
     // await client.close()
   }
